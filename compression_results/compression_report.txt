@@ -1,0 +1,206 @@
+================================================================================
+NEURAL NETWORK COMPRESSION REPORT
+================================================================================
+
+ORIGINAL MODEL
+----------------------------------------
+Size: 0.38 MB
+Compressed size: 0.35 MB
+Parameters: 99,331
+Non-zero parameters: 99,331
+
+BEST RESULTS PER CATEGORY
+----------------------------------------
+
+Best Pruning: random_0.7
+  Size: 0.23 MB
+  Compression: 1.63x
+  Sparsity: 69.8%
+
+Best Quantization: log2_4bit
+  Size: 0.05 MB
+  Compression: 8.02x
+
+Best Distillation: student_0.05
+  Size: 0.02 MB
+  Compression: 24.02x
+
+
+DETAILED RESULTS
+================================================================================
+
+PRUNING TECHNIQUES
+----------------------------------------
+
+magnitude_0.1:
+  Size: 0.38 MB
+  Compressed: 0.33 MB
+  Compression: 1.00x
+  Sparsity: 9.9%
+  Non-zero params: 89,462
+
+random_0.1:
+  Size: 0.38 MB
+  Compressed: 0.34 MB
+  Compression: 1.00x
+  Sparsity: 10.0%
+  Non-zero params: 89,387
+
+structured_0.1:
+  Size: 0.38 MB
+  Compressed: 0.32 MB
+  Compression: 1.00x
+  Sparsity: 9.3%
+  Non-zero params: 90,115
+
+magnitude_0.3:
+  Size: 0.38 MB
+  Compressed: 0.27 MB
+  Compression: 1.00x
+  Sparsity: 29.8%
+  Non-zero params: 69,724
+
+random_0.3:
+  Size: 0.38 MB
+  Compressed: 0.28 MB
+  Compression: 1.00x
+  Sparsity: 29.7%
+  Non-zero params: 69,861
+
+structured_0.3:
+  Size: 0.38 MB
+  Compressed: 0.25 MB
+  Compression: 1.00x
+  Sparsity: 29.4%
+  Non-zero params: 70,147
+
+magnitude_0.5:
+  Size: 0.38 MB
+  Compressed: 0.21 MB
+  Compression: 1.00x
+  Sparsity: 49.7%
+  Non-zero params: 49,987
+
+random_0.5:
+  Size: 0.38 MB
+  Compressed: 0.22 MB
+  Compression: 1.00x
+  Sparsity: 49.8%
+  Non-zero params: 49,903
+
+structured_0.5:
+  Size: 0.38 MB
+  Compressed: 0.18 MB
+  Compression: 1.00x
+  Sparsity: 49.6%
+  Non-zero params: 50,051
+
+magnitude_0.7:
+  Size: 0.23 MB
+  Compressed: 0.14 MB
+  Compression: 1.62x
+  Sparsity: 69.5%
+  Non-zero params: 30,250
+
+random_0.7:
+  Size: 0.23 MB
+  Compressed: 0.14 MB
+  Compression: 1.63x
+  Sparsity: 69.8%
+  Non-zero params: 30,045
+
+structured_0.7:
+  Size: 0.24 MB
+  Compressed: 0.12 MB
+  Compression: 1.59x
+  Sparsity: 69.1%
+  Non-zero params: 30,723
+
+
+QUANTIZATION TECHNIQUES
+----------------------------------------
+
+dynamic_int8:
+  Size: 0.09 MB
+  Compressed: 0.14 MB
+  Compression: 4.01x
+
+log2_4bit:
+  Size: 0.05 MB
+  Compressed: 0.07 MB
+  Compression: 8.02x
+
+log2_6bit:
+  Size: 0.07 MB
+  Compressed: 0.07 MB
+  Compression: 5.35x
+
+log2_8bit:
+  Size: 0.09 MB
+  Compressed: 0.07 MB
+  Compression: 4.01x
+
+minifloat_E4M3:
+  Size: 0.09 MB
+  Compressed: 0.11 MB
+  Compression: 4.01x
+
+minifloat_E5M2:
+  Size: 0.09 MB
+  Compressed: 0.10 MB
+  Compression: 4.01x
+
+minifloat_E3M4:
+  Size: 0.09 MB
+  Compressed: 0.10 MB
+  Compression: 4.01x
+
+
+KNOWLEDGE DISTILLATION
+----------------------------------------
+
+student_0.25:
+  Size: 0.08 MB
+  Compressed: 0.08 MB
+  Compression: 4.74x
+  Parameters: 20,866
+
+student_0.1:
+  Size: 0.03 MB
+  Compressed: 0.03 MB
+  Compression: 11.97x
+  Parameters: 8,242
+
+student_0.05:
+  Size: 0.02 MB
+  Compressed: 0.02 MB
+  Compression: 24.02x
+  Parameters: 4,090
+
+
+RECOMMENDATIONS
+----------------------------------------
+
+1. For maximum compression: Combine techniques
+   - Apply magnitude pruning (50-70%)
+   - Then apply log2 or minifloat quantization
+   - Expected compression: 10-20x
+
+2. For hardware deployment:
+   - Use log2 quantization (powers of 2 are efficient)
+   - Or structured pruning (removes entire channels)
+
+3. For maintaining accuracy:
+   - Start with small pruning amounts (10-30%)
+   - Use knowledge distillation for aggressive compression
+
+4. Combination strategies:
+   - Pruning + Quantization: Multiplicative compression
+   - Distillation + Quantization: Small and efficient models
+
+5. Next steps:
+   - Test compressed models on your specific task
+   - Fine-tune if accuracy drop is significant
+   - Consider hardware-specific optimizations
+
+================================================================================
