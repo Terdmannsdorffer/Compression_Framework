@@ -6,44 +6,44 @@ OPTIMAL TECHNIQUES FOR DIFFERENT BER THRESHOLDS
 ----------------------------------------
 
 BER Threshold: <= 10%
-  Best Technique: distillation: student_0.1
-  Compression Ratio: 11.97x
-  Actual BER: 7.7%
-  Final Size: 0.03 MB
-  Size Reduction: 91.6%
+  Best Technique: distillation: student_0.25
+  Compression Ratio: 4.74x
+  Actual BER: 5.0%
+  Final Size: 0.08 MB
+  Size Reduction: 78.9%
 
 BER Threshold: <= 20%
-  Best Technique: distillation: student_0.05
-  Compression Ratio: 24.02x
-  Actual BER: 10.5%
-  Final Size: 0.02 MB
-  Size Reduction: 95.8%
+  Best Technique: distillation: student_0.1
+  Compression Ratio: 11.97x
+  Actual BER: 20.0%
+  Final Size: 0.03 MB
+  Size Reduction: 91.6%
 
 BER Threshold: <= 30%
   Best Technique: distillation: student_0.05
   Compression Ratio: 24.02x
-  Actual BER: 10.5%
+  Actual BER: 30.0%
   Final Size: 0.02 MB
   Size Reduction: 95.8%
 
 BER Threshold: <= 40%
   Best Technique: distillation: student_0.05
   Compression Ratio: 24.02x
-  Actual BER: 10.5%
+  Actual BER: 30.0%
   Final Size: 0.02 MB
   Size Reduction: 95.8%
 
 BER Threshold: <= 50%
   Best Technique: distillation: student_0.05
   Compression Ratio: 24.02x
-  Actual BER: 10.5%
+  Actual BER: 30.0%
   Final Size: 0.02 MB
   Size Reduction: 95.8%
 
 BER Threshold: <= 60%
   Best Technique: distillation: student_0.05
   Compression Ratio: 24.02x
-  Actual BER: 10.5%
+  Actual BER: 30.0%
   Final Size: 0.02 MB
   Size Reduction: 95.8%
 
@@ -54,61 +54,31 @@ PARETO OPTIMAL POINTS
 
 1. distillation: student_0.05
    Compression: 24.02x
-   BER: 10.5%
+   BER: 30.0%
    Size: 0.02 MB
 
 2. distillation: student_0.1
    Compression: 11.97x
-   BER: 7.7%
+   BER: 20.0%
    Size: 0.03 MB
 
-3. quantization: log2_4bit
-   Compression: 8.02x
-   BER: 0.0%
-   Size: 0.05 MB
+3. distillation: student_0.25
+   Compression: 4.74x
+   BER: 5.0%
+   Size: 0.08 MB
 
-4. quantization: log2_6bit
-   Compression: 5.35x
-   BER: 0.0%
-   Size: 0.07 MB
-
-5. quantization: dynamic_int8
-   Compression: 4.01x
-   BER: 0.0%
-   Size: 0.09 MB
-
-6. quantization: log2_8bit
-   Compression: 4.01x
-   BER: 0.0%
-   Size: 0.09 MB
-
-7. quantization: minifloat_E4M3
-   Compression: 4.01x
-   BER: 0.0%
-   Size: 0.09 MB
-
-8. quantization: minifloat_E5M2
-   Compression: 4.01x
-   BER: 0.0%
-   Size: 0.09 MB
-
-9. quantization: minifloat_E3M4
-   Compression: 4.01x
-   BER: 0.0%
-   Size: 0.09 MB
-
-10. pruning: random_0.7
-   Compression: 1.63x
-   BER: 0.0%
-   Size: 0.23 MB
+4. pruning: magnitude_0.1
+   Compression: 1.00x
+   BER: 4.9%
+   Size: 0.38 MB
 
 
 RECOMMENDATIONS
 ----------------------------------------
 
-Recommended (Knee Point): quantization: log2_4bit
-  This offers the best balance with 8.02x compression
-  at 0.0% BER
+Recommended (Knee Point): distillation: student_0.25
+  This offers the best balance with 4.74x compression
+  at 5.0% BER
 
 For different use cases:
 - Critical applications (BER < 10%): Use pruning with low amounts
