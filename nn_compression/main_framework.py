@@ -1,6 +1,6 @@
 """
-Neural Network Compression Framework - Main Framework
-Unified interface that orchestrates all compression modules
+Neural Network Compression Framework - Main Framework with PIV-PINN Precision
+Unified interface that orchestrates all compression modules with precision-aware analysis
 """
 
 import torch
@@ -17,16 +17,23 @@ from .stats_module import StatsModule
 from .analysis_module import AnalysisModule
 from .export_module import ExportModule
 
+# Try to import precision calculator
+try:
+    from precision_calculator import PINNPrecisionCalculator
+    PRECISION_AVAILABLE = True
+except ImportError:
+    PRECISION_AVAILABLE = False
+
 
 class ModelCompressionFramework(BaseCompressionFramework):
     """
-    Comprehensive framework for neural network compression without training data.
+    Comprehensive framework for neural network compression with PIV-PINN precision analysis.
     
     Techniques included:
     - Pruning: magnitude, random, structured
     - Quantization: dynamic INT8, log2, minifloat
     - Knowledge Distillation: automatic student architecture generation
-    - BER-aware analysis and optimization
+    - PIV-PINN precision-aware analysis and optimization
     """
     
     def __init__(self, model_path: str, device='cuda' if torch.cuda.is_available() else 'cpu'):
@@ -42,14 +49,19 @@ class ModelCompressionFramework(BaseCompressionFramework):
         
         print(f"Model loaded successfully from: {model_path}")
         print(f"Device: {device}")
+        
+        if PRECISION_AVAILABLE:
+            print("🎯 PIV-PINN precision analysis enabled!")
+        else:
+            print("⚠️ PIV-PINN precision calculator not available - using BER estimation")
 
     # Delegate methods to appropriate modules
     def get_model_stats(self, model, include_performance=True):
-        """Get comprehensive model statistics"""
+        """Get comprehensive model statistics with precision"""
         return self.stats.get_model_stats(model, include_performance)
 
     def _print_stats(self, name, stats):
-        """Print model statistics"""
+        """Print model statistics with precision focus"""
         return self.stats._print_stats(name, stats)
 
     # Pruning methods
@@ -83,15 +95,25 @@ class ModelCompressionFramework(BaseCompressionFramework):
         """Create and train student model"""
         return self.distillation.create_student_model(compression_ratio, train_student, epochs)
 
-    # Analysis methods
+    # Analysis methods with precision focus
+    def analyze_precision_compression_tradeoff(self, precision_thresholds=[50, 60, 70, 80, 90], 
+                                             save_results=True):
+        """Analyze precision vs compression trade-off"""
+        return self.analysis.analyze_precision_compression_tradeoff(precision_thresholds, save_results)
+
     def analyze_ber_compression_tradeoff(self, ber_thresholds=[0.1, 0.2, 0.3, 0.4, 0.5], 
                                         save_results=True):
-        """Analyze BER vs compression trade-off"""
+        """Legacy BER analysis - use analyze_precision_compression_tradeoff instead"""
+        print("⚠️ analyze_ber_compression_tradeoff is deprecated. Use analyze_precision_compression_tradeoff instead.")
         return self.analysis.analyze_ber_compression_tradeoff(ber_thresholds, save_results)
 
     def plot_results(self):
-        """Create comprehensive visualizations"""
+        """Create comprehensive visualizations with precision focus"""
         return self.analysis.plot_results()
+
+    def plot_precision_comparison(self):
+        """Create detailed precision before/after comparison plots"""
+        return self.analysis.plot_precision_detailed_comparison()
 
     # Export methods
     def export_compressed_models(self, output_dir='compressed_models'):
@@ -106,9 +128,9 @@ class ModelCompressionFramework(BaseCompressionFramework):
         """Create comparison table of all techniques"""
         return self.export.create_model_comparison_table()
 
-    def export_best_models_only(self, output_dir='best_models', ber_threshold=0.3):
-        """Export only the best models based on BER threshold"""
-        return self.export.export_best_models_only(output_dir, ber_threshold)
+    def export_best_models_only(self, output_dir='best_models', precision_threshold=70.0):
+        """Export only the best models based on precision threshold"""
+        return self.export.export_best_models_only(output_dir, precision_threshold)
 
     # Main compression pipeline
     def compress_all(self, pruning_amounts=[0.1, 0.3, 0.5, 0.7], 
@@ -116,13 +138,13 @@ class ModelCompressionFramework(BaseCompressionFramework):
                     student_ratios=[0.25, 0.1],
                     train_students=True,
                     student_epochs=50):
-        """Apply all compression techniques and return comprehensive results"""
+        """Apply all compression techniques and return comprehensive results with precision analysis"""
         
         print("="*60)
-        print("NEURAL NETWORK COMPRESSION ANALYSIS")
+        print("NEURAL NETWORK COMPRESSION ANALYSIS WITH PIV-PINN PRECISION")
         print("="*60)
         
-        # Original model stats
+        # Original model stats with precision
         print("\nAnalyzing original model...")
         self.results['original'] = self.get_model_stats(self.original_model)
         self._print_stats("Original Model", self.results['original'])
@@ -139,15 +161,15 @@ class ModelCompressionFramework(BaseCompressionFramework):
         
         return self.results
 
-    def quick_compress(self, target_compression=5.0, max_ber=0.3):
+    def quick_compress_precision(self, target_compression=5.0, min_precision=70.0):
         """
-        Quick compression targeting a specific compression ratio with BER constraint
+        Quick compression targeting a specific compression ratio with precision constraint
         
         Args:
             target_compression: Desired compression ratio (e.g., 5.0 for 5x compression)
-            max_ber: Maximum acceptable BER (0.3 = 30%)
+            min_precision: Minimum acceptable precision (70.0 = 70%)
         """
-        print(f"\nQuick compression targeting {target_compression}x with BER < {max_ber*100}%")
+        print(f"\nQuick compression targeting {target_compression}x with precision >= {min_precision}%")
         print("="*60)
         
         # Run basic compression techniques
@@ -168,13 +190,13 @@ class ModelCompressionFramework(BaseCompressionFramework):
                 continue
             for name, stats in category_results.items():
                 compression = orig_size / stats['size_mb']
-                ber = stats.get('ber', 0)
+                precision = stats.get('precision', 50.0)
                 
-                if compression >= target_compression * 0.8 and ber <= max_ber:
+                if compression >= target_compression * 0.8 and precision >= min_precision:
                     candidates.append({
                         'name': f"{category}: {name}",
                         'compression': compression,
-                        'ber': ber,
+                        'precision': precision,
                         'category': category,
                         'technique': name
                     })
@@ -187,28 +209,41 @@ class ModelCompressionFramework(BaseCompressionFramework):
             print(f"\nBest technique found:")
             print(f"  {best['name']}")
             print(f"  Compression: {best['compression']:.2f}x")
-            print(f"  BER: {best['ber']*100:.1f}%")
+            print(f"  Precision: {best['precision']:.1f}%")
             
             # Export the best model
-            self.export_best_models_only('quick_compressed_models', max_ber)
+            self.export_best_models_only('quick_compressed_models', min_precision)
             
             return best
         else:
-            print(f"\nNo techniques found that achieve {target_compression}x compression with BER < {max_ber*100}%")
+            print(f"\nNo techniques found that achieve {target_compression}x compression with precision >= {min_precision}%")
             print("Try:")
-            print("  - Increasing target compression ratio")
-            print("  - Relaxing BER constraint")
+            print("  - Reducing target compression ratio")
+            print("  - Lowering precision constraint")
             print("  - Running full compression analysis")
             return None
 
+    def quick_compress(self, target_compression=5.0, max_ber=0.3):
+        """
+        Legacy quick compress method - redirects to precision-based version
+        
+        Args:
+            target_compression: Desired compression ratio
+            max_ber: Maximum acceptable BER (converted to minimum precision)
+        """
+        print("⚠️ quick_compress is deprecated. Use quick_compress_precision instead.")
+        # Convert BER to precision (inverse relationship)
+        min_precision = max(0, 100 - max_ber*200)
+        return self.quick_compress_precision(target_compression, min_precision)
+
     def benchmark_compression(self, techniques=['pruning', 'quantization', 'distillation']):
         """
-        Benchmark specific compression techniques
+        Benchmark specific compression techniques with precision analysis
         
         Args:
             techniques: List of techniques to benchmark ['pruning', 'quantization', 'distillation']
         """
-        print(f"\nBenchmarking compression techniques: {techniques}")
+        print(f"\nBenchmarking compression techniques with precision analysis: {techniques}")
         print("="*60)
         
         # Initialize results
@@ -229,23 +264,78 @@ class ModelCompressionFramework(BaseCompressionFramework):
         
         return self.results
 
+    def find_optimal_precision_compression(self, min_precision=80.0):
+        """
+        Find the technique that achieves the best compression while maintaining minimum precision
+        
+        Args:
+            min_precision: Minimum acceptable precision (default 80%)
+        """
+        if not self.results:
+            print("No compression results available. Run compress_all() first.")
+            return None
+        
+        print(f"\nFinding optimal compression technique with precision >= {min_precision}%")
+        print("="*50)
+        
+        orig_size = self.results['original']['size_mb']
+        best_technique = None
+        best_compression = 1.0
+        
+        for category, category_results in self.results.items():
+            if category == 'original':
+                continue
+            
+            for name, stats in category_results.items():
+                precision = stats.get('precision', 50.0)
+                compression = orig_size / stats['size_mb']
+                
+                if precision >= min_precision and compression > best_compression:
+                    best_compression = compression
+                    best_technique = {
+                        'category': category,
+                        'name': name,
+                        'compression': compression,
+                        'precision': precision,
+                        'size_mb': stats['size_mb'],
+                        'stats': stats
+                    }
+        
+        if best_technique:
+            print(f"✅ Optimal technique found:")
+            print(f"   Category: {best_technique['category']}")
+            print(f"   Technique: {best_technique['name']}")
+            print(f"   Compression: {best_technique['compression']:.2f}x")
+            print(f"   Precision: {best_technique['precision']:.1f}%")
+            print(f"   Final size: {best_technique['size_mb']:.2f} MB")
+            print(f"   Size reduction: {(1 - best_technique['size_mb']/orig_size)*100:.1f}%")
+        else:
+            print(f"❌ No technique found that maintains precision >= {min_precision}%")
+            print("   Consider:")
+            print("   - Lowering precision requirement")
+            print("   - Using less aggressive compression")
+            print("   - Training with more epochs for distillation")
+        
+        return best_technique
 
-# Main function for easy usage
+
+# Main function for easy usage with precision focus
 def compress_model(pth_path, output_dir='compression_results', 
                   train_students=True, student_epochs=50,
-                  analyze_ber_tradeoff=True,
-                  quick_mode=False, target_compression=5.0):
+                  analyze_precision_tradeoff=True,
+                  quick_mode=False, target_compression=5.0, min_precision=70.0):
     """
-    Main function to compress a model from a .pth file
+    Main function to compress a model from a .pth file with precision analysis
     
     Args:
         pth_path: Path to the .pth file
         output_dir: Directory to save results
         train_students: Whether to train student models
         student_epochs: Number of epochs for student training
-        analyze_ber_tradeoff: Whether to perform BER-aware analysis
+        analyze_precision_tradeoff: Whether to perform precision-aware analysis
         quick_mode: If True, run quick compression targeting specific ratio
         target_compression: Target compression ratio for quick mode
+        min_precision: Minimum precision requirement for quick mode
     """
     
     print(f"\nLoading model from: {pth_path}")
@@ -257,8 +347,11 @@ def compress_model(pth_path, output_dir='compression_results',
     framework = ModelCompressionFramework(pth_path)
     
     if quick_mode:
-        # Quick compression mode
-        result = framework.quick_compress(target_compression=target_compression)
+        # Quick compression mode with precision
+        result = framework.quick_compress_precision(
+            target_compression=target_compression, 
+            min_precision=min_precision
+        )
         if result:
             print(f"\nQuick compression completed!")
             print(f"Results saved to: {output_dir}/")
@@ -273,10 +366,10 @@ def compress_model(pth_path, output_dir='compression_results',
         student_epochs=student_epochs
     )
     
-    # Run BER-aware analysis if requested
-    if analyze_ber_tradeoff:
-        ber_analysis = framework.analyze_ber_compression_tradeoff(
-            ber_thresholds=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
+    # Run precision-aware analysis if requested
+    if analyze_precision_tradeoff:
+        precision_analysis = framework.analyze_precision_compression_tradeoff(
+            precision_thresholds=[50, 60, 70, 80, 90]
         )
     
     # Generate outputs
@@ -290,39 +383,52 @@ def compress_model(pth_path, output_dir='compression_results',
     framework.export_compressed_models(f"{output_dir}/models")
     
     print("\nExporting best models...")
-    framework.export_best_models_only(f"{output_dir}/best_models")
+    framework.export_best_models_only(f"{output_dir}/best_models", min_precision)
     
     print("\nCreating comparison table...")
     framework.create_model_comparison_table()
     
-    # Print final summary
+    # Print final summary with precision focus
     print("\n" + "="*60)
-    print("COMPRESSION COMPLETE")
+    print("COMPRESSION COMPLETE - PRECISION ANALYSIS")
     print("="*60)
     print(f"Results saved to: {output_dir}/")
     print(f"  - Compression visualization: compression_analysis.png")
-    print(f"  - BER analysis visualization: ber_compression_analysis.png")
+    print(f"  - Precision analysis visualization: precision_compression_analysis.png")
     print(f"  - Compression report: {output_dir}/compression_report.txt")
-    print(f"  - BER analysis report: ber_compression_analysis.txt")
+    print(f"  - Precision analysis report: precision_compression_analysis.txt")
     print(f"  - All models: {output_dir}/models/")
     print(f"  - Best models: {output_dir}/best_models/")
     
-    # Print best compression achieved
+    # Print best compression achieved with precision info
     orig_size = results['original']['size_mb']
+    orig_precision = results['original'].get('precision', 100.0)
     best_compression = 1.0
     best_technique = "None"
+    best_precision = orig_precision
     
     for category, category_results in results.items():
         if category == 'original':
             continue
         for name, stats in category_results.items():
             comp = orig_size / stats['size_mb']
+            precision = stats.get('precision', 50.0)
             if comp > best_compression:
                 best_compression = comp
                 best_technique = f"{category}: {name}"
+                best_precision = precision
     
     print(f"\nBest compression achieved: {best_compression:.2f}x")
     print(f"Technique: {best_technique}")
+    print(f"Final precision: {best_precision:.1f}% (original: {orig_precision:.1f}%)")
+    print(f"Precision retention: {(best_precision/orig_precision)*100:.1f}%")
     print(f"Reduced from {orig_size:.2f} MB to {orig_size/best_compression:.2f} MB")
+    
+    # Find best technique that maintains high precision
+    optimal = framework.find_optimal_precision_compression(min_precision=80.0)
+    if optimal:
+        print(f"\nOptimal high-precision technique:")
+        print(f"  {optimal['category']}: {optimal['name']}")
+        print(f"  {optimal['compression']:.2f}x compression at {optimal['precision']:.1f}% precision")
     
     return framework, results

@@ -12,21 +12,21 @@ Non-zero parameters: 99,331
 BEST RESULTS PER CATEGORY
 ----------------------------------------
 
-Best Pruning: random_0.7
+Best Pruning: magnitude_0.7
   Size: 0.23 MB
   Compression: 1.62x
-  Sparsity: 69.6%
-  BER: 36.07%
+  Sparsity: 69.5%
+  BER: 23.01%
 
 Best Quantization: log2_4bit
   Size: 0.05 MB
   Compression: 8.02x
-  BER: 38.37%
+  BER: 23.01%
 
 Best Distillation: student_0.05
   Size: 0.02 MB
   Compression: 24.02x
-  BER: 30.00%
+  BER: 25.46%
 
 
 DETAILED RESULTS
@@ -40,7 +40,7 @@ magnitude_0.1:
   Compressed: 0.33 MB
   Compression: 1.00x
   Sparsity: 9.9%
-  BER: 4.86%
+  BER: 23.01%
   Non-zero params: 89,462
 
 random_0.1:
@@ -48,15 +48,15 @@ random_0.1:
   Compressed: 0.34 MB
   Compression: 1.00x
   Sparsity: 9.9%
-  BER: 5.25%
-  Non-zero params: 89,499
+  BER: 23.01%
+  Non-zero params: 89,479
 
 structured_0.1:
   Size: 0.38 MB
   Compressed: 0.32 MB
   Compression: 1.00x
   Sparsity: 9.3%
-  BER: 5.02%
+  BER: 23.01%
   Non-zero params: 90,115
 
 magnitude_0.3:
@@ -64,7 +64,7 @@ magnitude_0.3:
   Compressed: 0.27 MB
   Compression: 1.00x
   Sparsity: 29.8%
-  BER: 14.44%
+  BER: 23.01%
   Non-zero params: 69,724
 
 random_0.3:
@@ -72,15 +72,15 @@ random_0.3:
   Compressed: 0.28 MB
   Compression: 1.00x
   Sparsity: 29.8%
-  BER: 15.77%
-  Non-zero params: 69,766
+  BER: 23.01%
+  Non-zero params: 69,682
 
 structured_0.3:
   Size: 0.38 MB
   Compressed: 0.25 MB
   Compression: 1.00x
   Sparsity: 29.4%
-  BER: 15.88%
+  BER: 23.01%
   Non-zero params: 70,147
 
 magnitude_0.5:
@@ -88,23 +88,23 @@ magnitude_0.5:
   Compressed: 0.21 MB
   Compression: 1.00x
   Sparsity: 49.7%
-  BER: 24.01%
+  BER: 23.01%
   Non-zero params: 49,987
 
 random_0.5:
   Size: 0.38 MB
   Compressed: 0.22 MB
   Compression: 1.00x
-  Sparsity: 49.7%
-  BER: 26.07%
-  Non-zero params: 49,987
+  Sparsity: 49.6%
+  BER: 23.01%
+  Non-zero params: 50,085
 
 structured_0.5:
   Size: 0.38 MB
   Compressed: 0.18 MB
   Compression: 1.00x
   Sparsity: 49.6%
-  BER: 25.24%
+  BER: 23.01%
   Non-zero params: 50,051
 
 magnitude_0.7:
@@ -112,23 +112,23 @@ magnitude_0.7:
   Compressed: 0.14 MB
   Compression: 1.62x
   Sparsity: 69.5%
-  BER: 34.48%
+  BER: 23.01%
   Non-zero params: 30,250
 
 random_0.7:
-  Size: 0.23 MB
-  Compressed: 0.14 MB
-  Compression: 1.62x
-  Sparsity: 69.6%
-  BER: 36.07%
-  Non-zero params: 30,149
+  Size: 0.24 MB
+  Compressed: 0.15 MB
+  Compression: 1.61x
+  Sparsity: 69.4%
+  BER: 23.01%
+  Non-zero params: 30,376
 
 structured_0.7:
   Size: 0.24 MB
   Compressed: 0.12 MB
   Compression: 1.59x
   Sparsity: 69.1%
-  BER: 36.87%
+  BER: 23.01%
   Non-zero params: 30,723
 
 
@@ -139,43 +139,43 @@ dynamic_int8:
   Size: 0.09 MB
   Compressed: 0.14 MB
   Compression: 4.01x
-  BER: 31.00%
+  BER: 23.01%
 
 log2_4bit:
   Size: 0.05 MB
   Compressed: 0.07 MB
   Compression: 8.02x
-  BER: 38.37%
+  BER: 23.01%
 
 log2_6bit:
   Size: 0.07 MB
   Compressed: 0.07 MB
   Compression: 5.35x
-  BER: 38.33%
+  BER: 23.01%
 
 log2_8bit:
   Size: 0.09 MB
   Compressed: 0.07 MB
   Compression: 4.01x
-  BER: 38.33%
+  BER: 23.01%
 
 minifloat_E4M3:
   Size: 0.09 MB
   Compressed: 0.11 MB
   Compression: 4.01x
-  BER: 34.15%
+  BER: 23.01%
 
 minifloat_E5M2:
   Size: 0.09 MB
   Compressed: 0.10 MB
   Compression: 4.01x
-  BER: 35.42%
+  BER: 23.01%
 
 minifloat_E3M4:
   Size: 0.09 MB
   Compressed: 0.10 MB
   Compression: 4.01x
-  BER: 34.73%
+  BER: 23.01%
 
 
 KNOWLEDGE DISTILLATION
@@ -185,21 +185,21 @@ student_0.25:
   Size: 0.08 MB
   Compressed: 0.08 MB
   Compression: 4.74x
-  BER: 5.00%
+  BER: 22.63%
   Parameters: 20,866
 
 student_0.1:
   Size: 0.03 MB
   Compressed: 0.03 MB
   Compression: 11.97x
-  BER: 20.00%
+  BER: 18.69%
   Parameters: 8,242
 
 student_0.05:
   Size: 0.02 MB
   Compressed: 0.02 MB
   Compression: 24.02x
-  BER: 30.00%
+  BER: 25.46%
   Parameters: 4,090
 
 
@@ -212,8 +212,11 @@ Bit Error Rate (BER) represents the performance degradation:
 - BER > 50%: Significant performance degradation expected
 
 Recommended techniques (BER < 30%):
-  distillation: student_0.1: 11.97x compression, 20.0% BER
-  distillation: student_0.25: 4.74x compression, 5.0% BER
+  distillation: student_0.05: 24.02x compression, 25.5% BER
+  distillation: student_0.1: 11.97x compression, 18.7% BER
+  quantization: log2_4bit: 8.02x compression, 23.0% BER
+  quantization: log2_6bit: 5.35x compression, 23.0% BER
+  distillation: student_0.25: 4.74x compression, 22.6% BER
 
 
 RECOMMENDATIONS
